@@ -135,8 +135,11 @@
         <div class="card-title">Claude API</div>
         <div class="card-body">
           <div class="field">
-            <label>Claude API Key</label>
-            <input type="password" id="apiKey" placeholder="sk-ant-...">
+            <label>Claude API Key &nbsp;<a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener" style="color:var(--grease); font-size:11.5px; text-decoration:underline;">[รับ / เติม API Key]</a></label>
+            <div style="display:flex; gap:6px;">
+              <input type="password" id="apiKey" placeholder="sk-ant-..." style="flex:1;">
+              <button class="ghost small" id="toggleKeyBtn" type="button" title="แสดง/ซ่อนคีย์">👁</button>
+            </div>
           </div>
           <div class="field">
             <label>Model</label>
@@ -146,8 +149,16 @@
               <option value="claude-haiku-4-5-20251001">claude-haiku-4-5-20251001 (เร็ว/ประหยัด)</option>
             </select>
           </div>
-          <button class="ghost small" id="saveKeyBtn">บันทึกคีย์ไว้ในเบราว์เซอร์นี้</button>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <button class="primary small" id="saveKeyBtn" type="button">บันทึกคีย์</button>
+            <span id="saveKeyStatus" style="font-size:11.5px; color:var(--ok); opacity:0; transition:opacity .2s ease;">✓ บันทึกแล้ว</span>
+          </div>
           <div class="hint">คีย์จะถูกเก็บใน localStorage ของเครื่องนี้เท่านั้น ไม่ถูกส่งไปที่อื่นนอกจาก api.anthropic.com</div>
+          <div class="hint" style="margin-top:6px;">
+            <a href="https://console.anthropic.com/settings/usage" target="_blank" rel="noopener" style="color:var(--ink-soft);">[USAGE]</a> &nbsp;
+            <a href="https://console.anthropic.com/settings/limits" target="_blank" rel="noopener" style="color:var(--ink-soft);">[LIMIT &amp; TIER]</a> &nbsp;
+            <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" style="color:var(--ink-soft);">[BILLING]</a>
+          </div>
         </div>
       </div>
 
@@ -277,7 +288,14 @@ if(savedKey) apiKeyInput.value = savedKey;
 else if(DEFAULT_API_KEY) apiKeyInput.value = DEFAULT_API_KEY;
 document.getElementById('saveKeyBtn').addEventListener('click', ()=>{
   localStorage.setItem('stockconsole_apikey', apiKeyInput.value.trim());
-  alert('บันทึกคีย์แล้ว');
+  const status = document.getElementById('saveKeyStatus');
+  status.style.opacity = '1';
+  clearTimeout(status._hideTimer);
+  status._hideTimer = setTimeout(()=>{ status.style.opacity = '0'; }, 2000);
+});
+
+document.getElementById('toggleKeyBtn').addEventListener('click', ()=>{
+  apiKeyInput.type = apiKeyInput.type === 'password' ? 'text' : 'password';
 });
 
 // ---- state ----
